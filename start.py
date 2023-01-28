@@ -12,8 +12,11 @@ with open('secrets.json') as file_object:
     permissions = data["permissions"]
     panel_api_key = data["panel_api_key"]
     serverID = data["serverID"]
+    panelURL = data["panelURL"]
     print(name)
-    
+
+
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -24,19 +27,14 @@ async def on_ready():
     print("Ready!")
 
 @bot.slash_command()
-async def hello(ctx, name: str = None):
-    name = name or ctx.author.name
-    await ctx.respond(f"Hello {name}!")
-
-@bot.slash_command()
-async def connected(ctx, name: str = None):
-    name = name or ctx.author.name
+async def connected(ctx):
+    name = ctx.author.name
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer apikey',
     }
-    response = requests.get(('https://panel.skynode.pro/api/application/servers/external/' + serverID), headers=headers)
+    response = requests.get((panelURL + 'api/application/servers/external/' + serverID), headers=headers)
     content = response.content
     json_response = content.decode('utf-8').replace("'", '"')
     data = json.loads(json_response)
